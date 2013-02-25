@@ -1,0 +1,100 @@
+<html>
+<head>
+
+</head>
+<body>
+
+<button id="buttonFire">Fire!</button>
+<div id="outputData">
+  X: <span id="outputX"></span>
+  Y: <span id="outputY"></span>
+</div>
+<canvas id="inputCanvas" width="320" height="240" style="display:none"></canvas>
+<canvas id="debugCanvas" width="320" height="240"></canvas>
+<video id="inputVideo" autoplay loop></video>
+
+<div id="outputRaw"></div>
+<div id="outputHeadRaw">
+  X: <div id="outputHeadX"></div>
+  Y: <div id="outputHeadY"></div>
+  Z: <div id="outputHeadZ"></div>
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/headtrackr.js"></script>
+<script type="text/javascript">
+  var socket = io.connect();
+
+  var videoInput = document.getElementById('inputVideo');
+  var canvasInput = document.getElementById('inputCanvas');
+  
+  var htracker = new headtrackr.Tracker({
+    debug: document.getElementById("debugCanvas")
+  });
+  htracker.init(videoInput, canvasInput);
+  htracker.start();
+
+  document.addEventListener('facetrackingEvent',
+    function(event) {
+      var data = {
+        x: event.x,
+        y: event.y,
+        height: event.height,
+        angle: event.angle,
+        width: event.width,
+        confidence: event.confidence
+      }
+
+      outputHelper.updateLocation(data);
+
+      socket.emit('movement', data);
+    },
+    false
+  );
+
+  document.addEventListener('headtrackingEvent',
+    function(event) {
+      var data = {
+        x: event.x,
+        y: event.y,
+        z: event.z
+      }
+
+      outputHelper.updateHead(data);
+    },
+    false
+  );
+
+
+  document.addEventListener('headtrackrStatus',
+    function(event) {
+    },
+    false
+  );
+
+  document.getElementById('buttonFire').addEventListener(
+    'click',
+    function(event) {
+      console.log('keep firing asshole!');
+      socket.emit('fire', 'blarg!');
+    },
+    false
+  );
+  var outputHelper = {};
+  outputHelper.updateLocation = function(data) {
+    document.getElementById("outputX").innerHTML = 160 - data.x;
+    document.getElementById("outputY").innerHTML = 120 - data.y;
+
+    document.getElementById("outputRaw").innerHTML = JSON.stringify(data);
+  }
+
+  outputHelper.updateHead = function(data) {
+    document.getElementById("outputHeadX").innerHTML = data.x;
+    document.getElementById("outputHeadY").innerHTML = data.y;
+    document.getElementById("outputHeadZ").innerHTML = data.z;
+  }
+</script>
+
+</body>
+</html>    

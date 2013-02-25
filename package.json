@@ -1,0 +1,23 @@
+{
+  "name": "interceptor",
+  "version": "0.1.0",
+  "description": "Motion tracking USB webcam missile controller",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/james-huston/interceptor.git"
+  },
+  "author": "James Huston <james@jameshuston.net>",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "socket.io": "~0.9.13",
+    "connect": "~2.7.3"
+  }
+}
